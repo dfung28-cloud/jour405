@@ -9,7 +9,7 @@ Follow along with the demo to learn how to calculate percentage change using R a
 
 
 ```{r}
-library(tidyverse)
+vilibrary(tidyverse)
 ```
 
 
@@ -33,6 +33,10 @@ umd_fees_pct <- umd_fees |> mutate(pct_change = (`Fall 2026`- `Fall 2021`)/`Fall
 
 Write a few sentences about what you found in those percentages. What's the story here? What questions do you have?
 
+I was surprised that student sustainability was the largest percentage increase (by 150%). I don't even know what that is going toward, and I would like to know since that seems to keep increasing - that might be an interesting story. 
+I'm not surprised the shuttle bus fee has gone up nearly 60% since Fall 2021. I might guess that ridership has decreased since Covid, but the costs to maintain and operate the bus fleet and pay driver salaries are still there, thus maybe why they are trying to pool more money? They also have begun to upgrade some of the older buses to new electric buses, which are nice to have as a frequent rider.
+
+I would also like to know why the Athletics fee has remained the same while other programs have increased their fees. Could it maybe be that they are getting money from outside donors and therefore don't need to add anything to their fee?
 
 
 
