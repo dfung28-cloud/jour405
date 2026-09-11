@@ -9,7 +9,7 @@ In this assignment, we will be working with a dataset reporting the number of cr
 You will need to load the tidyverse library
 
 ```{r}
-
+library(tidyverse)
 ```
 
 Then you'll load the data from the web. The URL for the data is: https://raw.githubusercontent.com/dwillis/jour405/refs/heads/main/data/pg_crime_totals_2024.csv. You will create a dataframe called `pg_crime` that contains the data from this URL.
@@ -17,18 +17,24 @@ Then you'll load the data from the web. The URL for the data is: https://raw.git
 ### Task 2: Load the Data and Describe It
 
 ```{r}
+
+pg_crime <- read_csv("https://raw.githubusercontent.com/dwillis/jour405/refs/heads/main/data/pg_crime_totals_2024.csv")
+
 ```
 ### Task 3: Describe the Data
 
 You should examine that dataframe carefully by clicking on it in the Environment tab in RStudio. Write a couple of sentences describing the categories of incidents. From a reporting standpoint, are any of the categories more important than others? Why or why not? Do any of them make the job of summarizing the data more difficult? Why or why not?
 
-ANSWER HERE
+Accidents seem to be the most common category of incidents reported, and they tend to be their highest in later months in the year (October-December). Questions that could be examined through reporting may be looking at why are accidents so high in PG County- is it the drivers, the roads, a mix of both? I think the one of the more difficult categories to examine is "auto stolen" vs "auto stolen and returned" because you have to add both categories together to get the total number of cars stolen, you can't just think of them as separate categories. Also, it is a bit difficult to have "theft" vs. "theft from auto" as two separate categories, though I do appreciate having that distinction.
+
 
 ### Task 4: Calculating Averages
 
 Add up the total number of incidents per month for each category using `mutate()`, calling the new column `total_incidents`. Then calculate the average number of incidents per month for each category of crime using the total number of months, calling the new column `average_incidents`. Assign the result to a new dataframe called `pg_crime_averages`.
 
 ```{r}
+pg_crime_totals <- pg_crime |> mutate(total_incidents=(`Jan`+`Feb`+`Mar` +`Apr`+`May`+`Jun`+`Jul`+`Aug`+ `Sep`+ `Oct`+ `Nov` +`Dec`))
+pg_crime_averages <- pg_crime_totals |> mutate (average_incidents=(total_incidents/12)) 
 
 ```
 
@@ -36,7 +42,7 @@ Add up the total number of incidents per month for each category using `mutate()
 
 Examine the new dataframe, `pg_crime_averages`, by clicking on it in the Environment tab in RStudio. Write a couple of sentences describing the average number of incidents per month for each category. Which categories have the highest average number of incidents per month? Which have the lowest? What does this tell you about the pattern of crime in Prince George's County? Are there categories that you have questions about? Why or why not?
 
-ANSWER HERE
+The highest categories are accidents, stolen cars, and theft from cars, which shows that issues with cars tend to be a major issue in PG County. My next question would be if these are happening in particular neighborhoods or to particular car models (i.e. Hyundai or Kia vs. Mercedes). The lowest average incident totals are homicides and burglary and entry, and I might want to know why crimes against property and cars are far more common than more violent crimes against people. I feel like I always hear about homicides on the news, but not as many stories about stolen cars - this data may suggest more investigation may need to be done in that area.
 
 
 ### Task 6: Testing a Theory
@@ -44,19 +50,25 @@ ANSWER HERE
 One theory about crime is that it is more likely to occur in the summer months. Test this theory by creating three new columns using `mutate()` that calculate the percentage change compared to the average for each category of crime for the months of June, July, and August. Call the new columns `june_change`, `july_change`, and `august_change`. Assign the result to a new dataframe called `summer_crime_averages`.
 
 ```{r}
+summer_crime_averages <- pg_crime_averages |> mutate (june_change = ((Jun - average_incidents) / average_incidents) * 100,
+    july_change = ((Jul - average_incidents) / average_incidents) * 100,
+    august_change = ((Aug - average_incidents) / average_incidents) * 100)
 ```
 
 ### Task 7: Describe the Summer Crime Averages
 
 Look at the `summer_crime_averages` dataframe by clicking on it in the Environment tab in RStudio. Write a couple of sentences describing the percentage change in the average number of incidents per month for each category of crime for the months of June, July, and August. Do you see any patterns? What does this tell you about the theory that crime is more likely to occur in the summer months?
 
-ANSWER HERE
+Over the summer months, the percentage change of accidents went down in June and July, probably because there were fewer drivers on the roads. Also, the number of cars that were stolen, another high-occuring crime decreased by 5% over the course of the summer. Even the number of burglaries was down around 27% by August, even though people may be out of their homes on vacation during the summer. I think that these pieces of data and others show that for the major reported crimes, they may actually not be more likely to occur in the summer months, but, the same cannot be said for every category.
 
 ### Task 8: What's the Story?
 
 Write up a lede and nutgraf of a story focused on the crime data in Prince George's County. It could be from any of the dataframes you've created in this assignment. The lede should be a single sentence that summarizes the most important information in the data. The nutgraf should be a paragraph that provides more context and explains why the data is important.
 
-ANSWER HERE
+Data from Prince George's County shows that the most reported incidents in the county in 2024 were traffic and property-related.
+
+The county had an average of about 481 reported accidents per month, with October, May, and December as the months with the most reported accidents. There were nearly 6,000 accidents in Prince George's County in 2024, according to the data released by the county. Additionally, there was nearly 4,800 reported stolen automobiles stolen over the course of the year and just over 4,700 theft from auto cases. By comparison, there was an average of about five homicides reported per month and only 70 total reported cases, which is causing officials to wonder why the number of accidents and auto-related crimes is so high.
+
 
 ### Task 9: Save Your Work and Put it on GitHub
 
