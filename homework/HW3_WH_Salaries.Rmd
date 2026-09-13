@@ -35,9 +35,7 @@ Write code to calculate the mean and median of the salaries in the dataset using
 
 ```{r}
 wh_salaries |>
-  summarize(
-    mean_salary = mean(SALARY, na.rm = TRUE),
-    median_salary = median(SALARY, na.rm = TRUE)
+  summarize(mean_salary = mean(SALARY), median_salary = median(SALARY)
   )
 
 ```
@@ -48,13 +46,8 @@ Take the code you just wrote and add in the minimum and maximum salaries (the fu
 
 ```{r}
 wh_salaries |>
-  summarize(
-    mean_salary = mean(SALARY, na.rm = TRUE),
-    median_salary = median(SALARY, na.rm = TRUE),
-    min_salary = min(SALARY, na.rm = TRUE),
-    max_salary = max(SALARY, na.rm = TRUE)
+  summarize(mean_salary = mean(SALARY), median_salary = median(SALARY), min_salary = min(SALARY), max_salary = max(SALARY)
   )
-
 
 ```
 
