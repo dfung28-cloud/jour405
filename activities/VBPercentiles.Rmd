@@ -39,6 +39,7 @@ team_aces |> mutate(percentile = ntile(total_aces, 100))
 
 Write a couple of sentences that puts Maryland into context with the other teams in the dataset. You can do some Internet research to help with this.
 
+Maryland is in the 95th percentile when it comes to service aces, which puts them in the top 5% of teams with service aces. When you compare Maryland to other Big Ten schools, the next Big Ten school on the list is Penn State, which falls in the 87th percentile. This is very intriguing to see when you compare the win totals between the two teams, which shows that while Maryland may be good at getting service aces, it is not translating to match wins. While Penn State went 19-13 in 2025, Maryland went 8-22, and Penn State beat Maryland twice in both meetings in 2025.
 
 
 When you are done, save your work, switch to GitHub Desktop, then add, commit and push your changes to GitHub and submit the URL of the notebook in ELMS.
