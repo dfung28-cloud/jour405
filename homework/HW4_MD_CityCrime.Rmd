@@ -9,6 +9,8 @@ In this assignment, we will be working with a dataset of total crimes reported b
 You will need to load the tidyverse library and the janitor library
 
 ```{r}
+library(tidyverse)
+library(janitor)
 ```
 
 Then you'll load the data from the web. The URL for the data is: https://raw.githubusercontent.com/dwillis/jour405/refs/heads/main/data/md_cities_crime_2019_2020.csv. You will create a dataframe called `md_cities` that contains the data from this URL.
@@ -16,19 +18,27 @@ Then you'll load the data from the web. The URL for the data is: https://raw.git
 ### Task 2: Load the Data
 
 ```{r}
+md_cities <- read_csv ("https://raw.githubusercontent.com/dwillis/jour405/refs/heads/main/data/md_cities_crime_2019_2020.csv")
+names(md_cities)
 ```
 ### Task 3: Calculating Rates
 
 Calculate violent and property crime rates for each city for both years using `mutate()`. You'll create four new columns: `violent_rate_2019`, `property_rate_2019`, `violent_rate_2020`, and `property_rate_2020`. You'll need to figure out the proper unit rate, given that there are varying populations. There's no perfect choice; choose the one that works best for you. Save the results to a new dataframe called `md_cities_rates`.
 
 ```{r}
+md_cities_rates <- md_cities |>
+  mutate(
+    violent_rate_2019 = violent2019 / pop2019 * 1000,
+    property_rate_2019 = property2019 / pop2019 * 1000,
+    violent_rate_2020 = violent2020 / pop2020 * 1000,
+    property_rate_2020 = property2020 / pop2020 * 1000)
 ```
 
 ### Task 4: Describe the Rates
 
 Examine the new dataframe, `md_cities_rates`, by clicking on it in the Environment tab in RStudio and sorting by the rate columns. Write a couple of sentences about the results, comparing and contrasting the cities with the highest rates (both violent and property) in 2019 and 2020. Do you see any patterns? What does this tell you about crime in Maryland cities? What's the story here?
 
-ANSWER HERE
+By no surprise, the city of Baltimore had the highest violent crime rates in 2019. Baltimore is typically associated with crime in some lower-income neighborhoods, and it's also appropriate for the number to be high in an urban area like Baltimore. Another city that had high rates of violent crimes and crimes against property was Ocean City, which also doesn't surprise me because of the amount of tourists that visit the beach as well as the amount of homes that people have (and may not occupy in year-round). Another thing that stood out to me was how high the rate of crimes on property was in Ocean City in 2020, nearly double the next city. This is probably because during the pandemic, people may have gone to their homes in Ocean City to get away from everyone and for a change in scenery. Also, more cities in Montgomery County also had lower numbers of crime rates compared to their counterparts across the state.
 
 
 ### Task 5: Calculate Percentage Change
@@ -36,19 +46,30 @@ ANSWER HERE
 Let's add two percentage change columns to your dataframe: one for violent crime rates and one for property crime rates. You'll calculate the percentage change between 2019 and 2020 for each city. Save the results to a new dataframe called `md_cities_change`.
 
 ```{r}
+md_cities_change <- md_cities_rates |>
+  mutate(
+    violent_rate_change = (violent_rate_2020 - violent_rate_2019) / violent_rate_2019 * 100,
+    property_rate_change = (property_rate_2020 - property_rate_2019) / property_rate_2019 * 100)
+
+
 ```
 
 ### Task 7: Describe Percentage Changes
 
 Look at the `md_cities_change` dataframe by clicking on it in the Environment tab in RStudio. Write a couple of sentences describing the percentage change results. What's more interesting here, the patterns or the outliers? What's the story in the data?
 
-ANSWER HERE
+The percentage changes show a huge range among Maryland cities from 2019-2020. Some cities experienced large increases in violent crime rates, while others saw their rates decrease by 50% or even more. Similarly, property crime rates were also mixed, with some cities seeing big increases and other saw large  decreases. 
+
+However, I think what surprised me the most is to see a fair number of cities that went down to 0 crimes in 2020. I gather that maybe these cities across the state that had low crime numbers (and therefore drastic percentage decreases) are either extremely wealthy areas that would not be as susceptible to crimes or extremely rural areas that nobody would be traveling to, especially during a pandemic. Some of the other outliers suprised me too- how did Edmonston, MD have an 895% increase in crime in one year despite only gaining seven people in its population? This likely shows how even a few more or less crimes can produce a large percentage change.
 
 ### Task 8: Tell the Best Story
 
 Write up a lede and nutgraf of a story with the _best_ story idea you've found in this assignment. The lede should be a single sentence that summarizes the most important information in the data. The nutgraf should be a paragraph that provides more context and explains why the data is important.
 
-ANSWER HERE
+Edmonston, MD had a nearly 900% increase in violent crimes between 2019-2020, according to new data, but that may not be entirely valid.
+
+The town, which is located in Prince George's County, had a violent crime rate of less than 1% in 2019, but it jumped up to around 6.7% in 2020. While these rates are still relatively low, it raises concern on how crime escalated so high in one year, especially given how fewer people were out in 2020 because of the pandemic. We know that it does not have to do with people moving to Edmonston- the population increased by a mere 7 people between 2019-2020. If these crimes are being committed by people who do not live in Edmonston, this could potentially be a warning flag for smaller cities across Maryland to keep their eyes on their streets if their increases in crimes is mainly because of non-residents. More importantly, this could be a lesson for residents to not immediately react based on initial numbers or statistics without diving deeper into the data (which shows there was a very minimal increase in crimes).
+
 
 ### Task 9: Save Your Work and Put it on GitHub
 
