@@ -74,3 +74,35 @@ The town, which is located in Prince George's County, had a violent crime rate o
 ### Task 9: Save Your Work and Put it on GitHub
 
 Save this notebook, then commit it to your local repository. Push the changes to your GitHub repository and submit the URL for this file in ELMS.
+
+
+### Task 10: HW #5
+
+Take the HW4_MD_CityCrime.Rmd notebook you worked on and add a section at the bottom called Task 10. Your task will be to take the violent crime rates for 2020 and do three things:
+
+a) Using the 2020 violent crime rate, calculate the percentiles using `ntile()`. Save the results to a new dataframe called `md_cities_percentiles`. How many cities are above the 90th percentile?
+
+```{r}
+md_cities_percentiles <- md_cities_rates |>
+  mutate(violent_percentile = ntile(violent_rate_2020, 100))
+
+```
+ANSWER: 10 cities
+
+
+b) Calculate the Interquartile Range of the 2020 violent crime rate using `summarize()` and R's `IQR()` function. The syntax is similar to how `mean()` works.
+
+```{r}
+md_cities_rates |> summarize(violent_IQR_2020 = IQR(violent_rate_2020)
+)
+
+```
+
+c)Do the results change your best story idea from the previous assignment? Why or why not?
+
+I honestly think I might keep my story idea focusing on Edmonston. Even though it only ranks in the 87th percentile, it's still high enough in my opinion that it may be worth investigating. Furthermore, Edmonston's violent crime rate is at 6.68, which is above the IQR of 4.20 across the state. This makes me want to investigate what's behind the  increase in one year. I also don't see any cities that have a high violent crime rate also ranks above the 85th percentile across the state. 
+
+If I had to pick a different story, I might focus it on Ocean City, which ranked in the 100th percentile across the state and also had a high violent crime rate. However, it may not be as noteworthy since it probably represents the upper quartile (even though Ocean City is more populous than Edmonston). 
+
+
+
