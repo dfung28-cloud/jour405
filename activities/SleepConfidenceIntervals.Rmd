@@ -41,7 +41,7 @@ sleep_stats
 
 **Answer this question:** Based on these numbers alone, what would you tell the health reporter? Why might it be risky to report the average as the definitive answer for all students?
 
-ANSWER HERE
+I would tell the health reporter that the mean shows that most students get about 7.5-8 hours sleep a night, on average. However, it may be risky to share this number as the definitive number because this may not apply to all students based on their daily patterns, and this could be concerning for their health and may not tell the whole story.
 
 ### Task 3: Calculate the standard error
 
@@ -58,7 +58,8 @@ sleep_stats
 
 **Answer this question:** The standard error is much smaller than the standard deviation. Why? What does each one measure?
 
-ANSWER HERE
+The standard error shows by how much you should expect the mean to differ if you took many different samples of a group. On the other hand, the standard deviation tells use the spread of the sample mean. The standard error is smaller because the average of the 37 students will probably have less variation than if the each individual student was surveyed.  
+
 
 ### Task 4: Calculate a 95% confidence interval
 
@@ -79,7 +80,8 @@ sleep_stats |>
 
 **Answer this question:** Write one sentence explaining what this confidence interval means in plain English that a reader would understand.
 
-ANSWER HERE
+This confidence interval shows that they are 95% confident that the real average number of hours of sleep students get falls between the upper and lower bounds of the confidence interval.
+
 
 ### Task 5: Visualize the distribution with the confidence interval
 
@@ -110,9 +112,10 @@ ggplot(sleep_data, aes(x = hours)) +
   theme_minimal()
 ```
 
-**Answer this question:** Look at the chart. Notice that the confidence interval is much narrower than the spread of individual data points. Why? What's the difference between the variation in individual sleep hours and the uncertainty about the average?
+**Answer this question:** Look at the chart. Notice that the confidence interval is much narrower than the spread of individual data points. Why? What's the difference between the variation in individual sleep hours and the uncertainty about the average
 
-ANSWER HERE
+The interval is narrow because the confidence interval measures the uncertainty of the average, and because it is so small it makes it much narrower. Even though the range is so large, the confidence interval centers around the mean because that's the approximate average for the enitre population surveyed.
+
 
 ### Task 6: The CDC question — is 7 hours within the interval?
 
@@ -134,7 +137,9 @@ sleep_stats |>
   b) "Students May Not Be Getting Enough Sleep, Survey Suggests"
   c) "Survey: Students Getting Recommended Amount of Sleep"
 
-ANSWER HERE
+I would choose A because the entire confidence interval is above 7, which lines up with the headline. Including 7 hours is specific enough to tell the readers the summary, but the main keyword is including the word "average" because the individual data is much wider than just 7 hours.
+
+Rule out B
 
 ### Task 7: What about a bigger sample?
 
