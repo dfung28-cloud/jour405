@@ -58,4 +58,4 @@ weekly_wmata |>
 
 **Answer this question:** Describe the trend you see. Is ridership going up, down, or staying flat? What are the big dips, and what might explain them? What would you want to know before writing a story about Metro weekly ridership trends?
 
-ANSWER HERE
+After a sharp decrease in ridership, it is starting to pick back up again. The big dips tend to be at the start of the year, maybe because people are traveling for the holidays or off of work, so they won't be commuting on the Metro. I would want to know what is a "typical" number of commuters per week is, and I'd also want to know the pre-pandemic levels of Metro ridership since work habits changed a lot after the pandemic.
