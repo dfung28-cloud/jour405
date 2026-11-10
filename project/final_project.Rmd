@@ -1,0 +1,84 @@
+---
+title: "Final Project"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+
+
+Question: "Is Vision Zero reducing the number of pedestrians and cyclists killed or seriously injured in Montgomery County?"
+
+Hypothesis:
+
+1. Since Vision Zero began, the number of pedestrians and cyclists killed or seriously injured has NOT declined significantly.
+2. Most serious pedestrian and cyclist crashes happen on major state-run roads.
+3. Completed safety projects saw larger declines than similar High Injury Network corridors without projects.
+
+
+
+```{r}
+library(tidyverse)
+library(janitor)
+```
+
+Here is the nonmotorist data:
+
+THIS DATA COVERS:
+
+This is data from the Montgomery County Government that shows individual records of nonmotorist crashes in Montgomery County (one row per person). It is updated weekly by the county, but I will only use full calendar years of data (January 1, 2015 to December 31, 2025. All these crashes come from police reports that are filed through the Automated Crash Reporting System (ACRS). 
+
+Format: CSV
+
+
+Most important columns: date, non-motorist type, route type, road name, injury severity
+What's missing: Data for crashes on interstates and the ICC (Maryland Route 200), High Injury Network and project maps
+
+
+
+```{r}
+
+nonmotorists <- read_csv ("https://data.montgomerycountymd.gov/api/views/n7fk-dce5/rows.csv?accessType=DOWNLOAD")
+
+```
+
+Here is the incidents dataset:
+
+
+This table has one row per every crash: every traffic collision reported on local and county roads in Montgomery County, NOT JUST ones involving cyclists or pedestrians. Data runs from January 1, 2015 to December 31, 2025 (will only use full years of data).
+
+Format: CSV
+
+```{r}
+incidents <- read_csv ("https://data.montgomerycountymd.gov/api/views/bhju-22kf/rows.csv?accessType=DOWNLOAD")
+```
+
+
+High Injury Map (NEED TO FIX- not properly loaded)
+
+
+Format: ArcGIS map (very large)
+
+This will be a map of road corridors in the county that have the most serious and fatal crashes. These are the roads the county has prioritized is prioritizing for safety projects. It's published from the county.
+
+
+```{r}
+high_injury <- read_csv ("https://www.arcgis.com/apps/mapviewer/index.html?webmap=64c23bf31da64d36a87b21a39db75aec")
+```
+
+
+
+
+Questions/need help:
+
+For KSI, should I count crashes or people? Some crashes have more than one person that was injured.
+When I have a large number of crashes to analyze (7000+), is there a way R can give me a yearly average?
+How do I handle the COVID period in my chart/graph?
+It also looks like scooters were added as a separate category in 2024- how do I handle this when comparing years?
+
+Can we set up a time to walk through how to incorporate the High Injury Network ArcGIS maps into my project? I'm a little confused on how to find what you mentioned in your responses to the last assignment. I found the URL but when I tried to run it, it did not come out properly.
