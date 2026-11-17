@@ -11,14 +11,113 @@ When you save the notebook, an HTML file containing the code and output will be 
 
 The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
 
+------------------------------------------------------------------------------------------------------------------------
+
+Final Project: The Tests You Could Run work
+
+Tests I Should Run (have started some of them already):
+
+
+Hypothesis #1:
+
+1. Yearly totals and average 
+This will show me how many fatal accidents are in a typical year.
+
+2. Line chart
+This will show the trend over time, as well as the dip during COVID.
+
+3. Linear regression
+This will show me whether the trend is real.
+
+4. T-test
+This could help me compare an average month pre-COVID and an average month post-COVID to see whether there was a difference after COVID.
+
+Hypothesis #2: Is the share of serious crashes higher on state roads than county roads?
+
+Chart that shows the share of crashes that were serious on each road type
+Bar chart with margins of error
+Z-score to show unusually bad months in the dataset
+
+
+
+```{r}
+library(tidyverse)
+library(janitor)
+library(lubridate)
+```
+
+
+```{r}
+nonmotorists <- read_csv ("https://data.montgomerycountymd.gov/api/views/n7fk-dce5/rows.csv?accessType=DOWNLOAD")
+
+```
+
+Years in the dataset:
+
+```{r}
+nonmotorists <- nonmotorists |>
+  mutate(year = year(mdy_hms(crash_date_time)))
+
+nonmotorists |> count(year)
+```
+The most people involved in non-motorist crashes were in 2017, although the numbers have been going up year over year since 2022. This count includes every injury level, not just people killed or seriously injured. It would be interesting to see what’s behind the increase since 2022.
+
+
+
+Injury categories:
+
+```{r}
+nonmotorists |> count(injury_severity)
+```
+Type of roads each crashes were on:
+
+```{r}
+nonmotorists |> count(route_type, sort = TRUE)
+```
+Most people in non-motorist crashes were on county roads. However, I have to keep in mind that it doesn’t necessarily mean county roads are more dangerous because there are far more miles of county roads than state highways in Maryland. Therefore, my second hypothesis needs to focus on comparing the share of crashes that were serious on each type of road, not the total number (per your suggestion).
+
+
+Number of people Killed or seriously injured (KSI) by year, total average
+```{r}
+ksi_by_year <- nonmotorists |>
+  filter(str_detect(str_to_lower(injury_severity), "fatal|serious"), year <= 2025) |>
+  group_by(year) |>
+  summarise(ksi_people = n())
+
+ksi_by_year
+
+ksi_by_year |> summarise(average = mean(ksi_people))
+```
+This tells me that the average number of people killed or seriously injured per year is about 86 people, so I can compare that when I make my line chart to see the yearly number.
+
+
+Line chart: 
+
+```{r}
+ksi_by_year |>
+  ggplot(aes(x = year, y = ksi_people)) +
+  geom_line() +
+  geom_point() +
+  labs(
+    title = "Pedestrians and cyclists killed or seriously injured",
+    subtitle = "Montgomery County, MD -- 2015–2025",
+    x = "Year",
+    y = "People killed or seriously injured (KSI)",
+    caption = "Source: Montgomery County crash reporting data (DataMontgomery)")
+
+```
+This line chart shows that the highest number of people who were killed or seriously injured was after the pandemic in 2021, and the lowest numbers were in 2020 during the pandemic. In recent years (since 2022), the number has been slowly increasing year by year, which makes me curious what's happening to cause the slow, steady increase. 
+
+
+--------------------------------------------------------------------------------------------------------------------
+
 
 Question: "Is Vision Zero reducing the number of pedestrians and cyclists killed or seriously injured in Montgomery County?"
 
 Hypothesis:
 
 1. Since Vision Zero began, the number of pedestrians and cyclists killed or seriously injured has NOT declined significantly.
-2. Most serious pedestrian and cyclist crashes happen on major state-run roads.
-3. Completed safety projects saw larger declines than similar High Injury Network corridors without projects.
+2. **NEW***: Among reported pedestrian and cyclist crashes, was the proportion involving serious or fatal injuries higher on state routes than on county routes?
 
 
 
@@ -58,18 +157,6 @@ Format: CSV
 incidents <- read_csv ("https://data.montgomerycountymd.gov/api/views/bhju-22kf/rows.csv?accessType=DOWNLOAD")
 ```
 
-
-High Injury Map (NEED TO FIX- not properly loaded)
-
-
-Format: ArcGIS map (very large)
-
-This will be a map of road corridors in the county that have the most serious and fatal crashes. These are the roads the county has prioritized is prioritizing for safety projects. It's published from the county.
-
-
-```{r}
-high_injury <- read_csv ("https://www.arcgis.com/apps/mapviewer/index.html?webmap=64c23bf31da64d36a87b21a39db75aec")
-```
 
 
 
