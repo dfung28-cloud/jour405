@@ -11,6 +11,279 @@ When you save the notebook, an HTML file containing the code and output will be 
 
 The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
 
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+AI link: https://claude.ai/share/7ed91408-7058-4223-8ed3-2864b835e8ff 
+
+Major questions going forward:
+
+1. **It looks like my original dataset link expired (maybe because the county updates the data every week?) Is this going to be an issue going forward?
+Any way to get a permalink?**
+
+Message I got --- Warning: Failed to open 'https://data.montgomerycountymd.gov/api/views/n7fk-dce5/rows.csv?accessType=DOWNLOAD': The requested URL returned error: 410
+Error: cannot open the connection
+
+2. As you can see in the AI chat, it suggested I change the years chunk to fit the formatting (which worked). Why is that?
+
+3. What does my years coefficient in the regression calculation mean?
+
+4. Is there a way I could do a side-by0side table that can show both charts together (if that's a neccesary idea)?
+
+5. Did I do the test correctly to see whether state roads like Georgia Ave and Viers Mill Road show up? As you can see in the AI chat, it said route_type only shows a category; I need to have the road name column so I can see which route each road is filed under.
+
+6. **Your feedback suggested I compare the proportion of KSI crashes on state vs. county routes. How exactly do I do that? I think that's critical to me being able to prove Hypothesis #2.**
+
+
+
+
+Updated hypothesis:
+
+1. Since Vision Zero began, the number of pedestrians and cyclists killed or seriously injured (KSI) has not declined significantly.
+
+
+2. Among reported pedestrian and cyclist crashes, was the proportion involving serious or fatal injuries higher on state-maintained routes than on county routes?
+
+
+```{r}
+library(tidyverse)
+library(janitor)
+library(lubridate)
+```
+
+
+```{r}
+nonmotorists <- read_csv("https://data.montgomerycountymd.gov/api/v3/views/n7fk-dce5/query.csv") |>
+  clean_names()
+
+```
+
+
+Years in the dataset:
+```{r}
+nonmotorists <- nonmotorists |>
+  mutate(year = year(crash_date_time))
+
+nonmotorists |> count(year)
+```
+
+Injury categories:
+
+```{r}
+nonmotorists |> count(injury_severity)
+```
+Type of road each crash is on:
+```{r}
+nonmotorists |> count(route_type, sort = TRUE)
+```
+
+Number of people killed/seriously injured (KSI):
+
+```{r}
+ksi_by_year <- nonmotorists |>
+  filter(str_detect(str_to_lower(injury_severity), "fatal|serious"), year <= 2025) |>
+  group_by(year) |>
+  summarise(ksi_people = n())
+
+ksi_by_year
+
+ksi_by_year |> summarise(average = mean(ksi_people))
+```
+
+
+Line chart:
+
+```{r}
+ksi_by_year |>
+  ggplot(aes(x = year, y = ksi_people)) +
+  geom_line() +
+  geom_point() +
+  labs(
+    title = "Pedestrians and cyclists killed or seriously injured",
+    subtitle = "Montgomery County, MD -- 2015–2025",
+    x = "Year",
+    y = "People killed or seriously injured (KSI)",
+    caption = "Source: Montgomery County crash reporting data (DataMontgomery)")
+
+```
+
+# of People Killed/Seriously Injured Each Year:
+
+```{r}
+ksi_by_year <- nonmotorists |>
+  filter(str_detect(str_to_lower(injury_severity), "fatal|serious"), year <= 2025) |>
+  group_by(year) |>
+  summarise(ksi_people = n_distinct(person_id))
+```
+
+Results:
+
+2015	92
+2016	75
+2017	90
+2018	88
+2019	97
+2020	64
+2021	64
+2022	105
+2023	79
+2024	89
+2025	98
+
+These show me that the year that had the most people killed/seriously injured was 2022.  
+
+
+Regression (based on HW13):
+
+```{r}
+ksi_model <- lm(ksi_people ~ year, data = ksi_by_year)
+summary(ksi_model)
+
+```
+This tells me that my Adjusted R-squared is -0.09499. My p-value is 0.7242. The coefficient for year is 0.4909.
+
+
+Scatterplot:
+
+
+```{r}
+ksi_by_year |>
+  ggplot(aes(x = year, y = ksi_people)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  scale_x_continuous(breaks = 2015:2025) +
+  labs(
+    title = "Pedestrians and cyclists killed or seriously injured, by year",
+    subtitle = "Montgomery County, MD, 2015–2025",
+    x = "Year",
+    y = "People killed or seriously injured (KSI)",
+    caption = "Source: Montgomery County crash reporting data (dataMontgomery)"
+    
+  )
+```
+
+The trend line on the scatterplot slope upward, starting at about 83 in 2015 to about 88 by 2025. The dots are scattered far from the line, which is reflected in the low R-squared and the p-value above 0.05. It's also worth noting that the pandemic years in 2020 and 2021 are the lowest on the chart, likely because of less cars on the roads.
+
+This data overall shows that even though the slope is positive, there's no evidence of any real trend because of the adusted R-squared value. This supports my first hypothesis that people killed or seriously injured has NOT gone down since Vision Zero began.
+
+
+Check on Hypothesis #1:
+
+Code from Derek (from 11/19 feedback)
+```{r}
+library(tidyverse)
+
+nonmotorist_crashes <- nonmotorists |>
+  mutate(
+    ksi_person = case_when(
+      is.na(injury_severity) |
+        str_trim(injury_severity) == "" |
+        str_detect(
+          str_to_lower(injury_severity),
+          "unknown|not reported"
+        ) ~ NA,
+
+      TRUE ~ str_detect(
+        str_to_lower(injury_severity),
+        "fatal|serious"
+      )
+    )
+  ) |>
+  group_by(report_number) |>
+  summarize(
+    year = first(year),
+    route_type = first(route_type),
+    nonmotorists_involved = n(),
+
+    ksi_crash = case_when(
+      any(ksi_person %in% TRUE) ~ TRUE,
+      any(is.na(ksi_person)) ~ NA,
+      TRUE ~ FALSE
+    ),
+
+    .groups = "drop"
+  )
+```
+
+The above code from Derek allowed me to have one row per crash, so crashes involving several people aren't counted repeatedly.
+
+
+How to count crashes (with help from AI:)
+```{r}
+ksi_crashes_by_year <- nonmotorist_crashes |>
+  filter(ksi_crash %in% TRUE, year <= 2025) |>
+  count(year, name = "ksi_crashes")
+
+ksi_crashes_by_year
+
+ksi_crashes_by_year |> summarise(average = mean(ksi_crashes))
+```
+This shows me that the average number of KSI crashes per year is 84.
+
+
+Regression on crashes:
+
+```{r}
+crash_model <- lm(ksi_crashes ~ year, data = ksi_crashes_by_year)
+summary(crash_model)
+```
+This tells me my p-value is 0.6843, my adjusted R-squared is -0.08975, and my years coefficient is 0.5273.
+
+Scatterplot:
+
+```{r}
+ggplot(ksi_crashes_by_year, aes(x = year, y = ksi_crashes)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  scale_x_continuous(breaks = unique(ksi_crashes_by_year$year)) +
+  labs(x = "Year",
+    y = "KSI crashes",
+    title = "Crashes killing or seriously injuring a pedestrian or cyclist",
+    caption = "Source: Montgomery County crash reporting data (dataMontgomery)")
+```
+This shows me that there is an  upward trend in the number of KSI crashes per year, from about 81 in 2015 to about 86 in 2025. The years are widely scattered, so the line doesn't explain much. Just like the other scatterplot, 2020 and 2021 are the lowest values, and then 2022 is one of the highest years.
+
+
+
+Hypothesis 2:
+
+
+Earlier check (per Derek's suggestion) to check the route type field to see whether state roads like Georgia Ave and Viers Mill Rd: 
+
+```{r}
+nonmotorists |>
+  filter(str_detect(str_to_lower(cross_street_name), "georgia|veirs")) |>
+  count(cross_street_name, route_type, sort = TRUE)
+```
+
+This test shows that state roads are included in the data, such as Georgia Ave and Viers Mill Road.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ------------------------------------------------------------------------------------------------------------------------
 
 Final Project: The Tests You Could Run work
@@ -109,7 +382,7 @@ ksi_by_year |>
 This line chart shows that the highest number of people who were killed or seriously injured was after the pandemic in 2021, and the lowest numbers were in 2020 during the pandemic. In recent years (since 2022), the number has been slowly increasing year by year, which makes me curious what's happening to cause the slow, steady increase. 
 
 
---------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 Question: "Is Vision Zero reducing the number of pedestrians and cyclists killed or seriously injured in Montgomery County?"
